@@ -1,5 +1,5 @@
-- [ ] Create a description
-- [ ] add notes to the read me
-- [ ] look at repositories to fork
+- [x ] Create a description
+- [x ] add notes to the read me
+- [ x] look at repositories to fork
 - [ ] run code and test in visual studio 
 
