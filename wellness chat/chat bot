@@ -14,7 +14,7 @@ from textbase import bot, Message
 from textbase.models import OpenAI
 
 # Load your OpenAI API key (if using OpenAI, else feel free to experiment with whatever you need)
-OpenAI.api_key = "sk-7huUIhSfHG56wYFVGU6587fF90ejuihH68Vft4Qlq78GUYijiC"
+OpenAI.api_key = "your API code here"
 
 SYSTEM_PROMPT = """You are configuring the behavior of your AI companion, which is designed to adapt its personality according to user preferences. 
 Provide a detailed description of the personality traits, tone, and style you want your AI companion to embody. 
