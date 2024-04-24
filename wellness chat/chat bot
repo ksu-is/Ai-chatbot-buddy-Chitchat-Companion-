@@ -1,0 +1,37 @@
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+    from typing import List
+from textbase import bot, Message
+from textbase.models import OpenAI
+
+# Load your OpenAI API key (if using OpenAI, else feel free to experiment with whatever you need)
+OpenAI.api_key = "sk-7huUIhSfHG56wYFVGU6587fF90ejuihH68Vft4Qlq78GUYijiC"
+
+SYSTEM_PROMPT = """You are configuring the behavior of your AI companion, which is designed to adapt its personality according to user preferences. 
+Provide a detailed description of the personality traits, tone, and style you want your AI companion to embody. 
+Consider factors such as warmth, humor, professionalism, empathy, and level of formality. 
+Additionally, specify any cultural references, interests, or conversational topics that align with the desired personality. 
+Your AI companion should reflect the chosen personality consistently across all interactions to create a personalized and 
+engaging experience for the user.
+"""
+
+@bot()
+def on_message(message_history: List[Message], state: dict = None):
+
+    # Generate responses from the bot (refer to examples in documentation)
+    # Use any other kind of logic/integration you want.
+    bot_response = ""
+
+    return {
+        "messages": [bot_response],
+        "state": state
+    }

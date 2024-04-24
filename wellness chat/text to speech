@@ -1,0 +1,94 @@
+from pathlib import Path
+from openai import OpenAI
+client = OpenAI()
+
+speech_file_path = Path(__file__).parent / "speech.mp3"
+response = client.audio.speech.create(
+  model="tts-1",
+  voice="alloy",
+  input="Today is a wonderful day to build something people love!"
+)
+
+response.stream_to_file(speech_file_path)
+
+
+from flask import Flask, render_template, request, jsonify
+import pyttsx3
+import enchant
+
+app = Flask(__name__)
+
+def speak(text):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
+
+def spell_check(text):
+    d = enchant.Dict("en_US")
+    words = text.split()
+    incorrect_words = [word for word in words if not d.check(word)]
+    return incorrect_words
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/speak', methods=['POST'])
+def speak_text():
+    text = request.form['text']
+    speak(text)
+    return jsonify({'status': 'success'})
+
+@app.route('/spellcheck', methods=['POST'])
+def check_spelling():
+    text = request.form['text']
+    incorrect_words = spell_check(text)
+    return jsonify({'incorrect_words': incorrect_words})
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech with Spell Check</title>
+</head>
+<body>
+    <textarea id="inputText" rows="5" cols="50"></textarea><br>
+    <button onclick="speakText()">Speak</button>
+    <button onclick="checkSpelling()">Check Spelling</button>
+    <p id="spellingResult"></p>
+
+    <script>
+        function speakText() {
+            var text = document.getElementById("inputText").value;
+            fetch('/speak', {
+                method: 'POST',
+                body: new URLSearchParams({ 'text': text }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+        }
+
+        function checkSpelling() {
+            var text = document.getElementById("inputText").value;
+            fetch('/spellcheck', {
+                method: 'POST',
+                body: new URLSearchParams({ 'text': text }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultElement = document.getElementById("spellingResult");
+                if (data.incorrect_words.length > 0) {
+                    resultElement.textContent = "Incorrect words found: " + data.incorrect_words.join(", ");
+                } else {
+                    resultElement.textContent = "No incorrect words found.";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
